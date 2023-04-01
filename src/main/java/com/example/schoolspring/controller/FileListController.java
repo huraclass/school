@@ -1,6 +1,7 @@
 package com.example.schoolspring.controller;
 
 import com.example.schoolspring.service.UploadService;
+import com.example.schoolspring.vo.FileListVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -20,7 +21,7 @@ public class FileListController {
     public ModelAndView bdUpload(FileListVO fileListVO, MultipartHttpServletRequest request, HttpServletRequest httpReq) {
         ModelAndView mav = new ModelAndView();
         int bdSeq = uploadService.fileProcess(fileListVO, request, httpReq);
-        fileListVO.setCount("");
+        fileListVO.setContent("");
         fileListVO.setTitle("");
 
         mav = bdSelectOneCall(fileListVO, String.valueOf(bdSeq), request);
