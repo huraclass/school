@@ -9,5 +9,6 @@ public class BoardContentDomain {
     private Integer bdSeq;
     private String mbId;
     private String bdTitle;
-    private String dbContent;
+    private String bdContent;
+
 }

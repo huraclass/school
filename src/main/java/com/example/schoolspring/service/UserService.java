@@ -1,7 +1,12 @@
 package com.example.schoolspring.service;
 
+import com.example.schoolspring.domain.BoardFileDomain;
 import com.example.schoolspring.domain.LoginDomain;
+import com.example.schoolspring.vo.FileListVO;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

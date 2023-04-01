@@ -23,4 +23,10 @@ public interface UploadMapper {
     public void bdContentRemove(HashMap<String, Object> map);
 
     public void bdFileRemove(BoardFileDomain boardFileDomain);
+
+    //select one
+    public BoardListDomain boardSelectOne(HashMap<String, Object> map);
+
+    //select one file
+    public List<BoardFileDomain> boardSelectOneFile(HashMap<String, Object> map);
 }
