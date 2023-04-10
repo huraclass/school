@@ -1,4 +1,4 @@
-package com.co.kr.exception;
+package com.example.schoolspring.exception;
 
 import com.example.schoolspring.code.Code;
 import org.springframework.http.HttpStatus;

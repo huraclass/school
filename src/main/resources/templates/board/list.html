@@ -45,8 +45,14 @@
 
         <div>
             <p style="padding: 30px 0;" th:text="${detail.bdContent}"></p>
+
             <ul th:if="${files}"  th:each="file : ${files}" style="display: inline-block;margin-bottom: 5px;">
-                <li> <img id="imgId" th:src="@{${file.upNewFileName}}" alt="첨부이미지" height="280" /></li>
+                <li> <img id="imgI" th:src="@{${file.upFilePath}}" height="1000" /></li>
+                <li> <img id="imgId" th:src="@{${file.upNewFileName}}"height="280" /></li>
+                <li> <img th:src="@{
+/Users/java/upload/5a5d1785-d1dd-4104-8037-9aaba9b665aa20230403173127.png}" /></li>
+                <span th:text="${file.upFilePath}"></span>
+                <span th:text="${file.upNewFileName}"></span>
             </ul>
 
         </div>

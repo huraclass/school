@@ -18,7 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class AllExceptionHandler {
     @ExceptionHandler(MissingServletRequestParameterException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public HttpEntity<ErrorResponse> handlerBindingResultException(com.co.kr.exception.RequestException exception){
+    public HttpEntity<ErrorResponse> handlerBindingResultException(com.example.schoolspring.exception.RequestException exception){
 
         // catch exception
         if(exception.getException() != null) {

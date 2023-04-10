@@ -7,6 +7,8 @@ import com.example.schoolspring.domain.BoardListDomain;
 import com.example.schoolspring.mapper.UploadMapper;
 import com.example.schoolspring.util.CommonUtils;
 import com.example.schoolspring.vo.FileListVO;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -26,10 +28,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class UploadServiceImple implements UploadService{
-    @Autowired
-    private UploadMapper uploadMapper;
+
+    private final UploadMapper uploadMapper;
 
     @Override
     public List<BoardListDomain> boardList() {
@@ -40,7 +44,8 @@ public class UploadServiceImple implements UploadService{
     @Override
     public int fileProcess(FileListVO fileListVO, MultipartHttpServletRequest request, HttpServletRequest httpReq) {
         HttpSession session = httpReq.getSession();
-
+//        log.info("listVO : {}",fileListVO.getSeq());
+        log.info("map : {}", uploadMapper);
         //content domain 생성
         BoardContentDomain boardContentDomain = BoardContentDomain.builder()
                 .mbId(session.getAttribute("id").toString())
@@ -48,6 +53,7 @@ public class UploadServiceImple implements UploadService{
                 .bdContent(fileListVO.getContent())
                 .build();
 
+        log.info("domain{}", boardContentDomain);
         if (fileListVO.getIsEdit() != null) {
             boardContentDomain.setBdSeq(Integer.parseInt(fileListVO.getSeq()));
             System.out.println("수정업데이트");
@@ -55,18 +61,21 @@ public class UploadServiceImple implements UploadService{
             uploadMapper.bdContentUpdate(boardContentDomain);
         } else {
             // db 인서트
+            log.info("start insert");
+            log.info("domain = {}", boardContentDomain);
             uploadMapper.contentUpload(boardContentDomain);
-            System.out.println(" db 인서트");
-
+            log.info("end insert");
         }
-
+        log.info("domain ; {}",boardContentDomain);
         // file 데이터 db 저장시 쓰일 값 추출
         int bdSeq = boardContentDomain.getBdSeq();
+        log.info("bdSeq, {}",bdSeq);
         String mbId = boardContentDomain.getMbId();
+        log.info("list");
 
         //파일객체 담음
         List<MultipartFile> multipartFiles = request.getFiles("files");
-
+        log.info("list end");
 
         // 게시글 수정시 파일관련 물리저장 파일, db 데이터 삭제
         if (fileListVO.getIsEdit() != null) { // 수정시
@@ -97,7 +106,7 @@ public class UploadServiceImple implements UploadService{
                                 bdFileRemove(list); //데이터 삭제
 
                             } catch (DirectoryNotEmptyException e) {
-                                throw com.co.kr.exception.RequestException.fire(Code.E404, "디렉토리가 존재하지 않습니다", HttpStatus.NOT_FOUND);
+                                throw com.example.schoolspring.exception.RequestException.fire(Code.E404, "디렉토리가 존재하지 않습니다", HttpStatus.NOT_FOUND);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -109,9 +118,10 @@ public class UploadServiceImple implements UploadService{
 
             }
         }
-        Path rootPath = Paths.get(new File("C://").toString(),"upload", File.separator).toAbsolutePath().normalize();
+        log.info("path");
+        Path rootPath = Paths.get(new File("/Users/java/").toString(),"upload", File.separator).toAbsolutePath().normalize();
         File pathCheck = new File(rootPath.toString());
-
+        log.info("path: {}",rootPath.toString());
         // folder chcek
         if(!pathCheck.exists()) pathCheck.mkdirs();
 
@@ -165,13 +175,14 @@ public class UploadServiceImple implements UploadService{
                             .upFilePath(targetPath.toString())
                             .upFileSize((int)multipartFile.getSize())
                             .build();
-
+                    log.info("fileup");
+                    log.info("domain : {}", boardFileDomain);
                     // db 인서트
                     uploadMapper.fileUpload(boardFileDomain);
                     System.out.println("upload done");
 
                 } catch (IOException e) {
-                    throw com.co.kr.exception.RequestException.fire(Code.E404, "잘못된 업로드 파일", HttpStatus.NOT_FOUND);
+                    throw com.example.schoolspring.exception.RequestException.fire(Code.E404, "잘못된 업로드 파일", HttpStatus.NOT_FOUND);
                 }
             }
 

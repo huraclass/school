@@ -25,13 +25,20 @@ public class FileListController {
 
     @PostMapping(value = "upload")
     public ModelAndView bdUpload(FileListVO fileListVO, MultipartHttpServletRequest request, HttpServletRequest httpReq) {
+        log.info("bdUpload");
+        log.info("fileLits : {}",fileListVO.getSeq());
         ModelAndView mav = new ModelAndView();
         int bdSeq = uploadService.fileProcess(fileListVO, request, httpReq);
+        log.debug("uploadService end");
+
         fileListVO.setContent("");
         fileListVO.setTitle("");
 
         mav = bdSelectOneCall(fileListVO, String.valueOf(bdSeq), request);
+        log.info("mav");
         mav.setViewName("board/boardList.html");
+        log.info("mav : {}",mav);
+        log.info("mav.getPath: {}", mav.getViewName());
         return mav;
     }
     public ModelAndView bdSelectOneCall(@ModelAttribute("fileListVO") FileListVO fileListVO, String bdSeq, HttpServletRequest request) {
