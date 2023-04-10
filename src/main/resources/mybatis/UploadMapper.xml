@@ -21,6 +21,7 @@
         values (#{bdSeq},#{mbId},#{upOriginalFileName},#{upNewFileName},#{upFilePath},#{upFileSize});
     </insert>
 -->
+    
     <update id="bdFileUpdate" parameterType="com.example.schoolspring.domain.BoardFileDomain">
         UPDATE files SET
                              bd_seq=#{bdSeq},
@@ -29,6 +30,15 @@
                              up_new_file_name=#{upNewFileName},
                              up_file_path=#{upFilePath},
                              up_file_size=#{upFileSize}
+        WHERE bd_seq=#{bdSeq}
+    </update>
+    <update id="bdContentUpdate" parameterType="com.example.schoolspring.domain.BoardContentDomain">
+        UPDATE board SET
+                             bd_seq=#{bdSeq},
+                             mb_id=#{mbId},
+                             bd_title=#{bdTitle},
+                             bd_content=#{bdContent},
+                             bd_update_at=now()
         WHERE bd_seq=#{bdSeq}
     </update>
 

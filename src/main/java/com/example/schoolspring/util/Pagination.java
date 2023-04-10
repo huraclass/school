@@ -1,11 +1,12 @@
 package com.example.schoolspring.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
-
+@Slf4j
 @Component
 public class Pagination {
 
@@ -13,7 +14,7 @@ public class Pagination {
         Map<String,Object> map = new HashMap<String,Object>();
         // 페이지넘버 초기화
         String pnum = request.getParameter("page");
-        System.out.println("pnum"+pnum);
+        log.info("pnum"+pnum);
         if (pnum == null) { pnum = "1"; }
 
         // 스트링을 인트로 파싱

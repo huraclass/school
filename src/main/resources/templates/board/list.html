@@ -40,27 +40,25 @@
             <span style="color: #00a2be">글쓴이 </span> <span th:text="${detail.mbId}"></span> <span style="color: #00a2be"> | </span>
             <span th:text="${detail.bdCreateAt}"></span> <span style="color: #00a2be"> | </span>
             <span th:text="${detail.bdUpdateAt}"></span>
-
         </div>
 
         <div>
             <p style="padding: 30px 0;" th:text="${detail.bdContent}"></p>
 
             <ul th:if="${files}"  th:each="file : ${files}" style="display: inline-block;margin-bottom: 5px;">
-                <li> <img id="imgI" th:src="@{${file.upFilePath}}" height="1000" /></li>
                 <li> <img id="imgId" th:src="@{${file.upNewFileName}}"height="280" /></li>
-                <li> <img th:src="@{
-/Users/java/upload/5a5d1785-d1dd-4104-8037-9aaba9b665aa20230403173127.png}" /></li>
-                <span th:text="${file.upFilePath}"></span>
-                <span th:text="${file.upNewFileName}"></span>
             </ul>
 
         </div>
-
         <div style="padding: 30px 0; text-align: right;">
+
+            <th:block th:if="${detail.mbId == session.id}">
                     <a th:href="@{/edit(bdSeq = ${detail.bdSeq})}"><button>수정</button></a>
                         <a th:href="@{/remove(bdSeq = ${detail.bdSeq})}"><button>삭제</button></a>
-                        <a  th:href="@{bdList}"><button style="background-color: #00a2be; color: white; margin-left: 20px">목록으로</button></a>
+            </th:block>
+
+            <a  th:href="@{bdList}"><button style="background-color: #00a2be; color: white; margin-left: 20px">목록으로</button></a>
+
                     </div>
 
                 </th:block>

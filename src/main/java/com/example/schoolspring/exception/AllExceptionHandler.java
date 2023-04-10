@@ -25,7 +25,7 @@ public class AllExceptionHandler {
             Exception ex = exception.getException();
             StackTraceElement [] steArr = ex.getStackTrace();
             for(StackTraceElement ste : steArr) {
-                System.out.println(ste.toString());
+                log.info(ste.toString());
             }
         }
 
@@ -46,7 +46,7 @@ public class AllExceptionHandler {
     @ExceptionHandler(HttpServerErrorException.InternalServerError.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public HttpEntity<ErrorResponse> handelerInternalServerError(InternalException exception) {
-        System.out.println("=========Internal Error=========" + exception.getMessage());
+        log.info("=========Internal Error=========" + exception.getMessage());
         ErrorResponse errRes = ErrorResponse.builder()
                 .result(exception.getCode().getResult())
                 .resultDesc(exception.getCode().getResultDesc())

@@ -65,7 +65,7 @@ public class UserController {
         session.setAttribute("mbLevel", loginDomain.getMbLevel());
 
         List<BoardListDomain> items = uploadService.boardList();
-        System.out.println("items ==> "+ items);
+        log.info("items ==> "+ items);
         mav.addObject("items", items);
 
         mav.setViewName("board/boardList.html");
@@ -80,7 +80,7 @@ public class UserController {
         log.info("리스트 진입");
         ModelAndView mav = new ModelAndView();
         List<BoardListDomain> items = uploadService.boardList();
-        System.out.println("items ==> "+ items);
+        log.info("items ==> "+ items);
         mav.addObject("items", items);
         mav.setViewName("board/boardList.html");
         return mav;

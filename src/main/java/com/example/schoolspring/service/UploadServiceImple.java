@@ -9,7 +9,6 @@ import com.example.schoolspring.util.CommonUtils;
 import com.example.schoolspring.vo.FileListVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -28,6 +27,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import static com.example.schoolspring.exception.RequestException.*;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -45,7 +46,6 @@ public class UploadServiceImple implements UploadService{
     public int fileProcess(FileListVO fileListVO, MultipartHttpServletRequest request, HttpServletRequest httpReq) {
         HttpSession session = httpReq.getSession();
 //        log.info("listVO : {}",fileListVO.getSeq());
-        log.info("map : {}", uploadMapper);
         //content domain 생성
         BoardContentDomain boardContentDomain = BoardContentDomain.builder()
                 .mbId(session.getAttribute("id").toString())
@@ -53,29 +53,16 @@ public class UploadServiceImple implements UploadService{
                 .bdContent(fileListVO.getContent())
                 .build();
 
-        log.info("domain{}", boardContentDomain);
         if (fileListVO.getIsEdit() != null) {
             boardContentDomain.setBdSeq(Integer.parseInt(fileListVO.getSeq()));
-            System.out.println("수정업데이트");
-            // db 업데이트
             uploadMapper.bdContentUpdate(boardContentDomain);
         } else {
-            // db 인서트
-            log.info("start insert");
-            log.info("domain = {}", boardContentDomain);
             uploadMapper.contentUpload(boardContentDomain);
-            log.info("end insert");
         }
-        log.info("domain ; {}",boardContentDomain);
-        // file 데이터 db 저장시 쓰일 값 추출
         int bdSeq = boardContentDomain.getBdSeq();
-        log.info("bdSeq, {}",bdSeq);
         String mbId = boardContentDomain.getMbId();
-        log.info("list");
 
-        //파일객체 담음
         List<MultipartFile> multipartFiles = request.getFiles("files");
-        log.info("list end");
 
         // 게시글 수정시 파일관련 물리저장 파일, db 데이터 삭제
         if (fileListVO.getIsEdit() != null) { // 수정시
@@ -94,23 +81,22 @@ public class UploadServiceImple implements UploadService{
 
                         fileList = (List<BoardFileDomain>) session.getAttribute("files");
 
-                        for (BoardFileDomain list : fileList) {
+                        fileList.forEach(list -> {
                             list.getUpFilePath();
                             Path filePath = Paths.get(list.getUpFilePath());
-
                             try {
 
                                 // 파일 삭제
-                                Files.deleteIfExists(filePath); // notfound시 exception 발생안하고 false 처리
+                                Files.deleteIfExists(filePath);
                                 //삭제
-                                bdFileRemove(list); //데이터 삭제
+                                bdFileRemove(list);
 
                             } catch (DirectoryNotEmptyException e) {
-                                throw com.example.schoolspring.exception.RequestException.fire(Code.E404, "디렉토리가 존재하지 않습니다", HttpStatus.NOT_FOUND);
+                                throw fire(Code.E404, "디렉토리가 존재하지 않습니다", HttpStatus.NOT_FOUND);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-                        }
+                        });
 
                     }
 
@@ -122,8 +108,9 @@ public class UploadServiceImple implements UploadService{
         Path rootPath = Paths.get(new File("/Users/java/").toString(),"upload", File.separator).toAbsolutePath().normalize();
         File pathCheck = new File(rootPath.toString());
         log.info("path: {}",rootPath.toString());
-        // folder chcek
-        if(!pathCheck.exists()) pathCheck.mkdirs();
+
+        //경로가 확인되지 않으면 경로 생성
+        if(isNonCheckedPath(pathCheck)) pathCheck.mkdirs();
 
 
         for (MultipartFile multipartFile : multipartFiles) {
@@ -135,7 +122,6 @@ public class UploadServiceImple implements UploadService{
                 String contentType = multipartFile.getContentType();
                 String origFilename = multipartFile.getOriginalFilename();
 
-                //확장자 조재안을경우
                 if(ObjectUtils.isEmpty(contentType)){
                     break;
                 }else { // 확장자가 jpeg, png인 파일들만 받아서 처리
@@ -179,10 +165,10 @@ public class UploadServiceImple implements UploadService{
                     log.info("domain : {}", boardFileDomain);
                     // db 인서트
                     uploadMapper.fileUpload(boardFileDomain);
-                    System.out.println("upload done");
+                    log.info("upload done");
 
                 } catch (IOException e) {
-                    throw com.example.schoolspring.exception.RequestException.fire(Code.E404, "잘못된 업로드 파일", HttpStatus.NOT_FOUND);
+                    throw fire(Code.E404, "잘못된 업로드 파일", HttpStatus.NOT_FOUND);
                 }
             }
 
@@ -190,6 +176,10 @@ public class UploadServiceImple implements UploadService{
 
 
         return bdSeq; // 저장된 게시판 번호
+    }
+
+    private boolean isNonCheckedPath(File pathCheck) {
+        return !pathCheck.exists();
     }
 
     @Override

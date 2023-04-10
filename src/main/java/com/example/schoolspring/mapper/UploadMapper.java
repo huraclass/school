@@ -21,6 +21,7 @@ public interface UploadMapper {
     @Insert("insert into files(bd_seq,mb_id,up_original_file_name,up_new_file_name,up_file_path,up_file_size)\n" +
             "        values (#{bdSeq},#{mbId},#{upOriginalFileName},#{upNewFileName},#{upFilePath},#{upFileSize});")
     public void fileUpload(BoardFileDomain boardFileDomain);
+
     public void bdContentUpdate(BoardContentDomain boardContentDomain);
 
     public void bdFileUpdate(BoardFileDomain boardFileDomain);
